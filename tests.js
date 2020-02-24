@@ -51,7 +51,7 @@ describe('tests all APIs', () => {
         .get('/spectrum/-1')
         .end((err, res) => {
             if (err) throw err;
-            expect(res.body).to.have.lengthOf(0);
+            expect(res.status).to.equal(404);
             done();
         });
     });

@@ -2,42 +2,44 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const find = require('lodash').find;
+const get = require('lodash').get;
+const filter = require('lodash').filter;
+const morgan = require('morgan');
+const cors = require('cors');
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, authorization'
-    );
-    res.header(
-        'Access-Control-Allow-Methods',
-        'GET, POST, OPTIONS, PUT, DELETE'
-    );
-    next();
-});
+app.use(morgan('tiny'));
+
+const corsOptions = {
+    origin: 'http://localhost:3000'
+};
 
 const areas = JSON.parse(fs.readFileSync('data/areas.json'));
+const PORT = '8000';
 
-app.get('/areas', (req, res) => {
-    res.json(areas);
-});
-
-app.get('/spectrum/:id', (req, res) => {
-    const {id} = req.params;
-    const area = find(areas, (area) => area.id === parseInt(id));
-    const frequencies = area ? area.frequencies : [];
-
-    if (!area) return res.json([]);
-
-    const spectrum = JSON.parse(
-        fs.readFileSync('data/spectrum.json')).spectrum;
-
-    const result = spectrum.filter((coordinate) => {
+const getFrequenciesForArea = (area, spectrum) => {
+    return filter(spectrum, (coordinate) => {
+        const frequencies = get(area, 'frequencies');
         return (
             coordinate.x >= frequencies[0] && coordinate.x <= frequencies[1]
         );
     });
-    res.json(result);
+};
+
+app.get('/areas', cors(corsOptions), (req, res) => {
+    res.json(areas);
+});
+
+app.get('/spectrum/:id', cors(corsOptions), (req, res) => {
+    const {id} = req.params;
+    const area = find(areas, (area) => area.id === parseInt(id));
+
+    if (!area) return res.status('404').send('Invalid area requested!');
+
+    const spectrum = JSON.parse(
+        fs.readFileSync('data/spectrum.json')).spectrum;
+
+    const results = getFrequenciesForArea(area, spectrum);
+    res.json(results);
 });
 
 app.use((err, req, res, next) => {
@@ -50,8 +52,8 @@ app.use((err, req, res, next) => {
 });
 
 if (!module.parent) {
-    app.listen('8000', () => {
-        console.log('Listening on port 8000...');
+    app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}...`);
     });
 }
 
