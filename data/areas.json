@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "name": "Cholesterols",
+        "frequencies": [-0.6, 0.2]
+    },
+    {
+        "id": 2,
+        "name": "Apolipoproteins",
+        "frequencies": [5.0, 5.5]
+    },
+    {
+        "id": 3,
+        "name": "Fatty acids",
+        "frequencies": [6.5, 8.5]
+    }
+]

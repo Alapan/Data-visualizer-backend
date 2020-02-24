@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Node backend for Nightingale assignment",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha tests.js",
+    "server": "nodemon server.js"
+  },
+  "author": "Alapan Mukherjee",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^7.0.1",
+    "nodemon": "^2.0.2"
+  }
+}
